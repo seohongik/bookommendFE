@@ -1,23 +1,74 @@
 import React, { useState } from 'react';
 import {
-  View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView
+  View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView,
+  Alert
 } from 'react-native';
+import axios from 'axios';
 
-const FindAccountScreen = () => {
+const FindAccountScreen = ( ) => {
   const [mode, setMode] = useState('findId'); // 'findId' or 'findPassword'
 
   // 공통 입력값
-  const [fullName, setFullName] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [signUpId, setSignUpId] = useState('');
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const url = Platform.OS === 'android' ?
+    'http://10.0.2.2:8080' : 'http://localhost:8080';
+
+  const [flag, setFlag] = useState(false);
 
   const handleFind = () => {
     if (mode === 'findId') {
-      console.log('아이디 찾기 요청:', { fullName, phoneNumber });
+
+      console.log('아이디 찾기 요청:', { signUpId, phoneNumber });
+
+      axios.get(url + '/r1/isUser?signUpId=' + signUpId + "&phoneNumber=" + phoneNumber + "&item=" + '1', {
+
+      }).then((response) => {
+        Alert.alert(response.data.email + " 입니다");
+      }).catch((error) => {
+        Alert.alert(error.response.data);
+      });
+
     } else {
       console.log('비밀번호 찾기 요청:', { email, phoneNumber });
+
+      axios.get(url + '/r1/isUser?email=' + email + "&phoneNumber=" + phoneNumber + "&item=" + '2', {
+
+      }).then((response) => {
+        Alert.alert(JSON.stringify(response.data))
+        setFlag(response.data.flag)
+      }).catch((error) => {
+        Alert.alert(error.response.data);
+      });
+
     }
+
   };
+
+  const modifyPassword = () => {
+    if (flag) {
+      axios.put(url + '/u1/user', {
+        'email': email,
+        'password': password,
+        'confirmPassword': confirmPassword,
+        'phoneNumber': phoneNumber,
+
+      }).then((response) => {
+        console.log("데이터 변경 완료")
+
+      }).catch((error) => {
+
+        console.log(error.response)
+        if (error.response.status == 400) {
+          Alert.alert(error.response.data.field + " : " + error.response.data.message);
+        }
+      })
+
+    }
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -47,15 +98,16 @@ const FindAccountScreen = () => {
         <>
           <TextInput
             style={styles.input}
-            placeholder="이름"
-            value={fullName}
-            onChangeText={setFullName}
+            placeholder="닉네임"
+            value={signUpId}
+            onChangeText={(text) => setSignUpId(text)}
+            autoCapitalize="none"
           />
           <TextInput
             style={styles.input}
             placeholder="전화번호"
             value={phoneNumber}
-            onChangeText={setPhoneNumber}
+            onChangeText={(text) => setPhoneNumber(text)}
             keyboardType="phone-pad"
           />
         </>
@@ -67,6 +119,7 @@ const FindAccountScreen = () => {
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
+            autoCapitalize="none"
           />
           <TextInput
             style={styles.input}
@@ -75,13 +128,25 @@ const FindAccountScreen = () => {
             onChangeText={setPhoneNumber}
             keyboardType="phone-pad"
           />
+          {flag &&
+            <>
+              <TextInput style={styles.input} placeholder="비밀번호" value={password} onChangeText={setPassword} secureTextEntry autoCapitalize="none" />
+              <TextInput style={styles.input} placeholder="비밀번호 확인" value={confirmPassword} onChangeText={setConfirmPassword} secureTextEntry autoCapitalize="none" />
+            </>
+          }
         </>
       )}
 
-      <TouchableOpacity style={styles.button} onPress={handleFind}>
-        <Text style={styles.buttonText}>{mode === 'findId' ? '아이디 찾기' : '비밀번호 찾기'}</Text>
-      </TouchableOpacity>
-    </SafeAreaView>
+      {flag ? (
+        <TouchableOpacity style={styles.button} onPress={modifyPassword}>
+          <Text style={styles.buttonText}>비밀번호 변경</Text>
+        </TouchableOpacity>
+      ) : (
+        <TouchableOpacity style={styles.button} onPress={handleFind}>
+          <Text style={styles.buttonText}>{mode === 'findId' ? '아이디 찾기' : '비밀번호 찾기'}</Text>
+        </TouchableOpacity>
+      )}
+    </SafeAreaView >
   );
 };
 

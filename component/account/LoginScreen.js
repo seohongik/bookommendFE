@@ -59,6 +59,7 @@ const LoginScreen = ({ navigation }) => {
           placeholder="비밀번호"
           value={password}
           onChangeText={setPassword}
+          autoCapitalize="none"
           secureTextEntry
         />
 

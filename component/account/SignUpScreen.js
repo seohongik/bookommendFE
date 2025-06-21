@@ -66,11 +66,11 @@ const SignUpScreen = () => {
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>회원가입</Text>
 
-      <TextInput style={styles.input} placeholder="ID" value={signUpId} onChangeText={setSignUpId} />
-      <TextInput style={styles.input} placeholder="사용자 이름" value={username} onChangeText={setUsername} />
+      <TextInput style={styles.input} placeholder="ID" value={signUpId} onChangeText={setSignUpId}  autoCapitalize="none"/>
+      <TextInput style={styles.input} placeholder="사용자 이름" value={username} onChangeText={setUsername} autoCapitalize="none" />
       <TextInput style={styles.input} placeholder="이메일" value={email} onChangeText={setEmail} keyboardType="email-address" />
-      <TextInput style={styles.input} placeholder="비밀번호" value={password} onChangeText={setPassword} secureTextEntry />
-      <TextInput style={styles.input} placeholder="비밀번호 확인" value={confirmPassword} onChangeText={setConfirmPassword} secureTextEntry />
+      <TextInput style={styles.input} placeholder="비밀번호" value={password} onChangeText={setPassword} secureTextEntry autoCapitalize="none"/>
+      <TextInput style={styles.input} placeholder="비밀번호 확인" value={confirmPassword} onChangeText={setConfirmPassword}  secureTextEntry autoCapitalize="none"/>
 
       <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.input}>
         <Text>생년월일: {dateOfBirth.toISOString().split('T')[0]}</Text>
