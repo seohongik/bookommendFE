@@ -4,10 +4,13 @@ import {
   Alert
 } from 'react-native';
 import axios from 'axios';
+import { Button } from 'react-native-paper';
 
-const FindAccountScreen = ( ) => {
+const FindAccountScreen = () => {
   const [mode, setMode] = useState('findId'); // 'findId' or 'findPassword'
-
+  const [authNumber, setAuthNumber] = useState(0);
+  const [showPasswordModifyFlag, setShowPasswordModifyFlag] = useState(false);
+  const [flag, setFlag] = useState(false);
   // 공통 입력값
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -17,12 +20,11 @@ const FindAccountScreen = ( ) => {
   const url = Platform.OS === 'android' ?
     'http://10.0.2.2:8080' : 'http://localhost:8080';
 
-  const [flag, setFlag] = useState(false);
+
 
   const handleFind = () => {
-    if (mode === 'findId') {
 
-      console.log('아이디 찾기 요청:', { signUpId, phoneNumber });
+    if (mode === 'findId') {
 
       axios.get(url + '/r1/isUser?signUpId=' + signUpId + "&phoneNumber=" + phoneNumber + "&item=" + '1', {
 
@@ -33,23 +35,38 @@ const FindAccountScreen = ( ) => {
       });
 
     } else {
-      console.log('비밀번호 찾기 요청:', { email, phoneNumber });
+      
+        axios.get(url + '/r1/isUser?email=' + email + "&phoneNumber=" + phoneNumber + "&item=" + '2', {
 
-      axios.get(url + '/r1/isUser?email=' + email + "&phoneNumber=" + phoneNumber + "&item=" + '2', {
+        }).then((response) => {
+          Alert.alert(JSON.stringify(response.data.message))
+          setFlag(response.data.flag)
 
-      }).then((response) => {
-        Alert.alert(JSON.stringify(response.data))
-        setFlag(response.data.flag)
-      }).catch((error) => {
-        Alert.alert(error.response.data);
-      });
-
+        }).catch((error) => {
+          Alert.alert(error.response.data);
+        });
     }
 
   };
 
+  const authMatching =()=>{
+    
+    axios.get(url + '/r1/verify?authNumber=' + authNumber + "&phoneNumber=" + phoneNumber, {
+
+        }).then((response) => {
+          Alert.alert("!!!!!!")
+          setShowPasswordModifyFlag(true);
+
+        }).catch((error) => {
+          Alert.alert(error.response.data);
+        });
+  }
+
   const modifyPassword = () => {
-    if (flag) {
+
+
+    if(password==confirmPassword){
+
       axios.put(url + '/u1/user', {
         'email': email,
         'password': password,
@@ -66,7 +83,8 @@ const FindAccountScreen = ( ) => {
           Alert.alert(error.response.data.field + " : " + error.response.data.message);
         }
       })
-
+    }else{
+      Alert.alert("입력값을 확인해주세요");
     }
   }
 
@@ -129,15 +147,29 @@ const FindAccountScreen = ( ) => {
             keyboardType="phone-pad"
           />
           {flag &&
+          <>
+            <TextInput
+              style={styles.input}
+              placeholder="인증번호"
+              value={authNumber}
+              onChangeText={(text)=>{setAuthNumber(text)}}
+              keyboardType="numberic"
+              autoCapitalize="none"
+            />
+            <TouchableOpacity style={styles.buttonVerify} onPress={authMatching}>
+              <Text style={styles.buttonTextVerify}>인증 확인</Text>
+            </TouchableOpacity>
+            </>}
+          {showPasswordModifyFlag &&
             <>
-              <TextInput style={styles.input} placeholder="비밀번호" value={password} onChangeText={setPassword} secureTextEntry autoCapitalize="none" />
-              <TextInput style={styles.input} placeholder="비밀번호 확인" value={confirmPassword} onChangeText={setConfirmPassword} secureTextEntry autoCapitalize="none" />
+              <TextInput style={styles.input} placeholder="비밀번호 입력" value={password} onChangeText={setPassword} secureTextEntry autoCapitalize="none" />
+              <TextInput style={styles.input} placeholder="비밀번호 확인 입력" value={confirmPassword} onChangeText={setConfirmPassword} secureTextEntry autoCapitalize="none" />
             </>
           }
         </>
       )}
 
-      {flag ? (
+      {showPasswordModifyFlag ? (
         <TouchableOpacity style={styles.button} onPress={modifyPassword}>
           <Text style={styles.buttonText}>비밀번호 변경</Text>
         </TouchableOpacity>
@@ -202,5 +234,18 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#fff',
     fontWeight: 'bold'
-  }
+  },
+  buttonVerify: {
+    width:100,
+    backgroundColor: 'black',
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginVertical: 6,
+  },
+  buttonTextVerify: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+
 });

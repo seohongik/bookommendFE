@@ -17,7 +17,8 @@ const LoginScreen = ({ navigation }) => {
 
     }).then((response) => {
 
-      savaSession(response.data)
+      //console.log(response.data)
+      savaSession({'id':response.data})
 
       Alert.alert("login 완료")
       navigation?.navigate?.('MainScreen')
@@ -31,7 +32,13 @@ const LoginScreen = ({ navigation }) => {
 
   const savaSession = async (item) => {
     try {
-      await AsyncStorage.setItem('session', JSON.stringify(item));
+      console.log({"id":item.id.id})
+
+      const jason = {
+        "id":""+item.id.id
+      }
+    
+      await AsyncStorage.setItem('session', JSON.stringify(jason));
   
     } catch (error) {
     }

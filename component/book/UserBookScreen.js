@@ -39,7 +39,6 @@ const data = [
     { 'label': '저자', 'value': 'author' },
 ]
 
-
 const UserBookScreen = () => {
 
     const radioButtons = useMemo(() => ([
@@ -66,6 +65,8 @@ const UserBookScreen = () => {
         }
     ]), []);
 
+    
+
 
     const [query, setQuery] = useState();
     const [display, setDisplay] = useState(100)
@@ -73,11 +74,25 @@ const UserBookScreen = () => {
     const [isFocus, setIsFocus] = useState();
     const [isFind, setIsFind] = useState(1);
     const [bookItms, setBookItems] = useState();
-    const[userId,setUserId] = useState(); 
+    const [userId, setUserId] = useState();
 
     useEffect(() => {
-
+        getKey();
     }, []);
+
+    const getKey = async () => {
+        try {
+            const value = await AsyncStorage.getItem('session');
+            if (value !== null) {
+                let valueJson = JSON.parse(value);
+                setUserId(valueJson.id);
+
+            }
+        } catch (e) {
+            console.log(e.message);
+        }
+    };
+    
 
 
 
@@ -113,6 +128,7 @@ const UserBookScreen = () => {
                     let coverImageUrl = (item.coverImageUrl)
 
                     const saveItem = () => {
+
                         Alert.alert(
                             '저장',
                             '정말로 저장하시겠습니까?',

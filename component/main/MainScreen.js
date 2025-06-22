@@ -28,7 +28,7 @@ import UserStatistics from "../book/UserStatistics";
 
 
 
-const MainScreen=()=> {
+const MainScreen=({})=> {
 
   const [selectedDate, setSelectedDate] = useState(null);
 
@@ -40,7 +40,7 @@ const MainScreen=()=> {
   const [recordModalKey, setRecordModalKey] = useState(0);
   const [statisticsModalKey, setStatisticsModalKey] = useState(0);
   
-  const onPressModalOpenSearch = () => {
+  const onPressModalOpenSearch = ({}) => {
     setSearchModalKey(prev => prev + 1); // 키 변경
     setIsModalVisibleSearch(true);
   };
@@ -97,27 +97,28 @@ const MainScreen=()=> {
           visible={isModalVisibleSearch}
           transparent={true}>
           <View style={styles.modalView}>
-            <Pressable onPress={onPressModalCloseSearch} selectedDate={selectedDate}>
+            <Pressable onPress={onPressModalCloseSearch} >
               <Text style={{ color: 'red' }}>Modal Close!</Text>
             </Pressable>
-            <UserBookScreen key={searchModalKey} />
+            <UserBookScreen key={searchModalKey} selectedDate={selectedDate}/>
           </View>
         </Modal>
       </View>
 
-      <View>
+      < View>
         <Modal
-          animationType="slide"
+          animationType="fade"
           visible={isModalVisibleRecord}
           transparent={true}>
           <View style={styles.modalView}>
-            <Pressable onPress={onPressModalCloseRecord } >
+            <Pressable onPress={onPressModalCloseRecord} >
               <Text style={{ color: 'red' }}>Modal Close!</Text>
             </Pressable>
-            <UserBookRecordScreen key={recordModalKey}  selectedDate={selectedDate}/>
+            <UserBookRecordScreen key={recordModalKey} selectedDate={selectedDate} />
           </View>
         </Modal>
       </View>
+      
       <View>
         <Modal
           animationType="slide"
@@ -140,7 +141,8 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     height: '100%',
-    backgroundColor: "white"
+    backgroundColor:'#fff'
+    
   },
   viewContainer: {
     justifyContent: 'center',
@@ -192,6 +194,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 50
   },
+
 });
 
 export default MainScreen;

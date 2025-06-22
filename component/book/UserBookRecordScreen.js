@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
     View, Text, TouchableOpacity, Image, TextInput, StyleSheet,
-    Alert, Button
+    Alert, Button, Animated, Easing
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Dropdown } from 'react-native-element-dropdown';
@@ -10,6 +10,8 @@ import { Rating } from 'react-native-ratings';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomDropdown from './CustomDropdown';
+import { BlurView } from '@react-native-community/blur';
+import Svg, { Path, Circle } from 'react-native-svg';
 
 const UserBookRecordScreen = ({ selectedDate }) => {
     const [bookList, setBookList] = useState([]);
@@ -109,45 +111,28 @@ const UserBookRecordScreen = ({ selectedDate }) => {
     useEffect(() => {
         // 셀렉티드 데이터가 미래면 오늘날자로 치환 로직 만들어야함)
         setReadDate(selectedDate)
-
-        const getItem = async (key) => {
-            try {
-                const value = await AsyncStorage.getItem(key);
-                if (value !== null) {
-                    let valueJson=JSON.parse(value);
-                    refreshData(valueJson['id']);
-                    
-                }
-            } catch (e) {
-                console.log(e.message);
-            }
-        };
-
-        
-
-        console.log(getItem('session'))
-
-
-        
+        getKey();
 
         return () => {
             clearInterval(increment.current);
         };
+
     }, [selectedDate]);
 
-    const handleStart = () => {
-        setIsActive(!isActive);
-        if (!isActive) {
-            increment.current = setInterval(() => {
-                setTimer(t => t + 1);
-            }, 10);
-            setShowPage(false)
-        } else {
-            clearInterval(increment.current);
-            setShowComment(true);
-            setShowPage(true)
+    const getKey = async () => {
+        try {
+            const value = await AsyncStorage.getItem('session');
+            if (value !== null) {
+                let valueJson = JSON.parse(value);
+                setUserId(valueJson.id)
+                refreshData(valueJson.id);
+
+            }
+        } catch (e) {
+            console.log(e.message);
         }
     };
+
 
     const formatTime = () => {
         const days = Math.floor(timer / (3600 * 24));
@@ -177,8 +162,6 @@ const UserBookRecordScreen = ({ selectedDate }) => {
 
     const updateToPage = () => {
 
-        setUserId(getItem('session')['id']);
-
         if (toPage !== 0) {
             Alert.alert("페이지 수가 없어서 저장합니다.");
             axios.put(url + '/u1/userBookPageCount/' + userId + '/' + userBookId, {
@@ -190,14 +173,49 @@ const UserBookRecordScreen = ({ selectedDate }) => {
         }
     };
 
+    const [blurAnim] = useState(new Animated.Value(0));
+    const [showBlur, setShowBlur] = useState(false);
+    const animateBlurIn = () => {
+        setShowBlur(true);
+        blurAnim.setValue(0);
+        Animated.timing(blurAnim, {
+            toValue: 1,
+            duration: 600,
+            easing: Easing.out(Easing.exp),
+            useNativeDriver: true,
+        }).start();
+    };
 
+    const animateBlurOut = () => {
+        Animated.timing(blurAnim, {
+            toValue: 0,
+            duration: 400,
+            easing: Easing.in(Easing.circle),
+            useNativeDriver: true,
+        }).start(() => setShowBlur(false)); // 끝나면 제거
+    };
+    const handleStart = () => {
+        const nextState = !isActive;
+        setIsActive(nextState);
+
+        if (nextState) {
+            animateBlurIn(); // ✅ Start 시 블러 시작
+            increment.current = setInterval(() => {
+                setTimer(t => t + 1);
+            }, 10);
+            setShowPage(false);
+        } else {
+            animateBlurOut(); // ✅ Stop 시 블러 제거
+            clearInterval(increment.current);
+            setShowComment(true);
+            setShowPage(true);
+        }
+    };
 
     const saveRecord = () => {
 
-
         if (toPage !== 0) {
 
-            setUserId(getItem('session')['id']);
 
             Alert.alert(
                 '저장',
@@ -250,27 +268,30 @@ const UserBookRecordScreen = ({ selectedDate }) => {
     return (
         <KeyboardAwareScrollView style={styles.container}>
 
-            <Dropdown
-                style={styles.dropdown}
-                data={bookList}
-                labelField="label"
-                valueField="value"
-                placeholder="책 선택"
-                renderItem={(item) => (
-                    <View style={styles.dropdownItem}>
-                        <Image source={{ uri: item.image }} style={styles.thumbnail} />
-                        <Text>{item.label}</Text>
-                    </View>
-                )}
-                onChange={(item) => {
-                    setSelectedBook(item);
-                    setSelectedPage(item);
-                    setUserBookId(item.userBookId)
-                    isShowTimer(item);
-                    AsyncStorage.setItem('selectedBookIsbn', item.bookIsbn).catch(console.error);
-                }}
-                value={selectedBook?.value}
-            />
+            <View >
+                <Dropdown
+                    style={styles.dropdown}
+                    data={bookList}
+                    labelField="label"
+                    valueField="value"
+                    placeholder="책 선택"
+                    renderItem={(item) => (
+                        <View style={styles.dropdownItem}>
+                            <Image source={{ uri: item.image }} style={styles.thumbnail} />
+                            <Text>{item.label}</Text>
+                        </View>
+                    )}
+                    onChange={(item) => {
+                        setSelectedBook(item);
+                        setSelectedPage(item);
+                        setUserBookId(item.userBookId)
+                        isShowTimer(item);
+                        AsyncStorage.setItem('selectedBookIsbn', item.bookIsbn).catch(console.error);
+                    }}
+                    value={selectedBook?.value}
+                />
+
+            </View>
 
             <Text>{selectedDate}</Text>
 
@@ -341,8 +362,37 @@ const UserBookRecordScreen = ({ selectedDate }) => {
 
                 />
             </View>
+            {showBlur && (
+                <Animated.View
+                    pointerEvents="none"
+                    style={[
+                        StyleSheet.absoluteFill,
+                        {
+                            transform: [
+                                {
+                                    scale: blurAnim.interpolate({
+                                        inputRange: [0, 1],
+                                        outputRange: [0.95, 1.05],
+                                    }),
+                                },
+                            ],
+                            opacity: blurAnim,
+                            zIndex: 5,
+                        },
+                    ]}
+                >
+                    <BlurView
+                        style={StyleSheet.absoluteFill}
+                        blurType="light"     // ✅ tint → blurType 으로 변경
+                        blurAmount={15}      // 블러 강도 조절
+                        reducedTransparencyFallbackColor="white"
+                    />
+                </Animated.View>
+            )}
+
             {showTimer &&
-                <View>
+                <View style={styles.timerContainer}>
+
                     <TouchableOpacity onPress={handleStart}>
                         <Text style={styles.timerToggle}>{!showSaveBtn ?
                             <Text>{!isActive ? 'Reading Start' : 'Reading Stop'}</Text> :
@@ -360,6 +410,7 @@ const UserBookRecordScreen = ({ selectedDate }) => {
 
                     <Text style={styles.timerText}>{formatTime()}</Text>
                 </View>}
+
             {showComment && (
                 <TextInput
                     style={styles.input}
@@ -393,15 +444,17 @@ const UserBookRecordScreen = ({ selectedDate }) => {
                     <Text style={[styles.bookText, styles.bookText.description]} numberOfLines={1} ellipsizeMode="tail">{selectedBook.description}</Text>
                 </View>
             )}
+            <View>
+                <Rating
+                    type="star"
+                    ratingCount={5}
+                    imageSize={30}
+                    showRating
+                    onFinishRating={setRating}
+                    onChangeText={rating}
+                />
+            </View>
 
-            <Rating
-                type="star"
-                ratingCount={5}
-                imageSize={30}
-                showRating
-                onFinishRating={setRating}
-                onChangeText={rating}
-            />
         </KeyboardAwareScrollView>
     );
 };
@@ -435,7 +488,8 @@ const styles = StyleSheet.create({
         borderWidth: 0.5,
         borderRadius: 8,
         paddingHorizontal: 10,
-        marginBottom: 20
+        marginBottom: 20,
+
     },
     dropdownPage: {
         height: 40,
@@ -449,22 +503,26 @@ const styles = StyleSheet.create({
     dropdownItem: {
         flexDirection: 'row',
         alignItems: 'center',
-        paddingVertical: 5
+        paddingVertical: 5,
+        zIndex: 1, // BlurView보다 뒤에 렌더링되게
     },
     thumbnail: {
         width: 30,
         height: 40,
-        marginRight: 10
+        marginRight: 10,
+
     },
     bookInfo: {
         margin: 13,
         alignItems: 'center',
-        marginBottom: 20
+        marginBottom: 20,
+
     },
     bookImage: {
         width: 100,
         height: 150,
-        marginBottom: 10
+        marginBottom: 10,
+        //zIndex: 1, // BlurView보다 뒤에 렌더링되게
     },
     bookText: {
         fontSize: 16,
@@ -475,6 +533,7 @@ const styles = StyleSheet.create({
         description: {
             color: 'brown'
         }
+
     },
     timerToggle: {
         fontSize: 24,
@@ -493,13 +552,24 @@ const styles = StyleSheet.create({
         borderColor: 'gray',
         borderRadius: 8,
         padding: 10,
-        marginVertical: 6
+        marginVertical: 6,
+        //zIndex: 1, // BlurView보다 뒤에 렌더링되게
     },
     textArea: {
         borderWidth: 1,
         borderColor: 'gray',
         padding: 10,
         textAlignVertical: 'top',
+    },
+    blurWrapper: {
+        ...StyleSheet.absoluteFillObject,
+        zIndex: 0,
+    }
+    , timerContainer: {
+        zIndex: 10, // Blur 위에 올리기
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 20,
     },
 });
 
