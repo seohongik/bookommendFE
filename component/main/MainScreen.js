@@ -24,7 +24,7 @@ import TimelineScreen from './TimelineScreen';
 import UserBookRecordScreen from '../book/UserBookRecordScreen';
 import CalendarMain from './CalMain';
 import UserBookScreen from '../book/UserBookScreen';
-import UserStatistics from "../book/UserStatistics";
+import UserStatisticsScreen from "../book/UserStatisticsScreen";
 
 
 
@@ -128,7 +128,7 @@ const MainScreen=({})=> {
             <Pressable onPress={onPressModalCloseStatistics } >
               <Text style={{ color: 'red' }}>Modal Close!</Text>
             </Pressable>
-            <UserStatistics key={recordModalKey}  selectedDate={selectedDate}/>
+            <UserStatisticsScreen key={recordModalKey}  selectedDate={selectedDate}/>
           </View>
         </Modal>
       </View>

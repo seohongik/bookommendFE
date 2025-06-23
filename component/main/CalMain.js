@@ -123,12 +123,12 @@ const CalendarMain = ({ onDateSelect }) => {
         })}
       </View>
 
-      {/* 선택된 날짜 출력 (선택했을 때만) */}
+      {/* 선택된 날짜 출력 (선택했을 때만)
       {selectedDate && (
         <Text >
           선택한 날짜: {selectedDate.year}-{selectedDate.month}-{selectedDate.day}
         </Text>
-      )}
+      )} */}
     </View>
   );
 };

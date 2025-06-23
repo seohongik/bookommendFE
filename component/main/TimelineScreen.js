@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Text, StyleSheet, RefreshControl } from 'react-native';
 import Timeline from 'react-native-timeline-flatlist';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const TimelineScreen = ({ selectedDate }) => {
@@ -12,12 +13,12 @@ const TimelineScreen = ({ selectedDate }) => {
 
   const [createdAt,setCreatedAt] = useState([]);              
 
-  const fetchTimeline = useCallback(() => {
+  const fetchTimeline = useCallback((userId) => {
     setRefreshing(true);
 
     axios.get(url+'/r1/timeline', {
       params: {
-        userId: 1,
+        userId: userId,
         date: selectedDate
       }
     }).then((response) => {
@@ -55,8 +56,21 @@ const TimelineScreen = ({ selectedDate }) => {
   }, [selectedDate]);
 
   useEffect(() => {
-    fetchTimeline();
+    getKey();
   }, [selectedDate]);
+
+   const getKey = async () => {
+        try {
+            const value = await AsyncStorage.getItem('session');
+            if (value !== null) {
+                let valueJson = JSON.parse(value);
+                fetchTimeline(valueJson.id);
+
+            }
+        } catch (e) {
+            console.log(e.message);
+        }
+    };
 
   return (
     <>
