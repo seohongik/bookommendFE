@@ -101,15 +101,17 @@ const UserStatisticsScreen = ({ selectedDate }) => {
     <>
       <ScrollView>
         <View style={styles.container}>
-          <Text>월별 독서량</Text>
+          
           <View style={styles.item}>
             <BarChart data={dataReadCount} style={styles.item} />
           </View>
-          <Text>월별 지식의 가격 :10_000원 단위</Text>
+          <Text>월별 독서량</Text>
+          
           <View style={styles.item}>
             <BarChart data={dataBookMoney} style={styles.item} />
           </View>
-          <Text>카테고리별 통계량</Text>
+          <Text>월별 지식의 가격 :10_000원 단위</Text>
+          
           <View style={styles.item}>
             <PieChart
               data={dataBookCategory}
@@ -118,6 +120,7 @@ const UserStatisticsScreen = ({ selectedDate }) => {
               radius={120}
               innerRadius={60}
             />
+            <Text>카테고리별 통계량</Text>
           </View>
           {/*
           <View style={styles.item}>
