@@ -126,7 +126,7 @@ const UserStatisticsScreen = ({ selectedDate }) => {
           <View style={styles.item}>
             <BarChart data={data} vertical style={styles.item} />
           </View>
-*/}
+          */}
         </View>
       </ScrollView>
     </>

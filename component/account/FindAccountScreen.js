@@ -26,7 +26,7 @@ const FindAccountScreen = () => {
 
     if (mode === 'findId') {
 
-      axios.get(url + '/r1/isUser?signUpId=' + signUpId + "&phoneNumber=" + phoneNumber + "&item=" + '1', {
+      axios.get(url + '/r1/isUserId?signUpId=' + signUpId + "&phoneNumber=" + phoneNumber, {
 
       }).then((response) => {
         Alert.alert(response.data.email + " 입니다");
@@ -36,7 +36,7 @@ const FindAccountScreen = () => {
 
     } else {
       
-        axios.get(url + '/r1/isUser?email=' + email + "&phoneNumber=" + phoneNumber + "&item=" + '2', {
+        axios.get(url + '/r1/isUserPw?email=' + email + "&phoneNumber=" + phoneNumber, {
 
         }).then((response) => {
           Alert.alert(JSON.stringify(response.data.message))
@@ -51,10 +51,9 @@ const FindAccountScreen = () => {
 
   const authMatching =()=>{
     
-    axios.get(url + '/r1/verify?authNumber=' + authNumber + "&phoneNumber=" + phoneNumber, {
+    axios.get(url + '/r1/verify?authNumber=' + authNumber + "&phoneNumber=" + phoneNumber +"&email="+email, {
 
         }).then((response) => {
-          Alert.alert("!!!!!!")
           setShowPasswordModifyFlag(true);
 
         }).catch((error) => {
@@ -64,24 +63,19 @@ const FindAccountScreen = () => {
 
   const modifyPassword = () => {
 
-
     if(password==confirmPassword){
 
-      axios.put(url + '/u1/user', {
+      axios.put(url + '/u1/password/verified', {
         'email': email,
         'password': password,
         'confirmPassword': confirmPassword,
-        'phoneNumber': phoneNumber,
+        'phoneNumber': phoneNumber, 
+        'authNumber':authNumber,
 
       }).then((response) => {
         console.log("데이터 변경 완료")
 
       }).catch((error) => {
-
-        console.log(error.response)
-        if (error.response.status == 400) {
-          Alert.alert(error.response.data.field + " : " + error.response.data.message);
-        }
       })
     }else{
       Alert.alert("입력값을 확인해주세요");
@@ -135,7 +129,7 @@ const FindAccountScreen = () => {
             style={styles.input}
             placeholder="이메일 (아이디)"
             value={email}
-            onChangeText={setEmail}
+            onChangeText={(text)=>setEmail(text)}
             keyboardType="email-address"
             autoCapitalize="none"
           />
@@ -143,7 +137,7 @@ const FindAccountScreen = () => {
             style={styles.input}
             placeholder="전화번호"
             value={phoneNumber}
-            onChangeText={setPhoneNumber}
+            onChangeText={(text)=>setPhoneNumber(text)}
             keyboardType="phone-pad"
           />
           {flag &&

@@ -54,9 +54,8 @@ const SignUpScreen = () => {
     }).catch((error)=>{
       
       console.log(error.response)
-      if(error.response.status==400){
-        Alert.alert( error.response.data.field+ " : "+error.response.data.message);
-      }
+      Alert.alert( error.response.data);
+      
     })
 
 

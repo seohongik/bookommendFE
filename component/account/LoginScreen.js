@@ -24,7 +24,7 @@ const LoginScreen = ({ navigation }) => {
       navigation?.navigate?.('MainScreen')
 
     }).catch((error) => {
-      console.log(error.response)
+      
       Alert.alert(error.response.data);
 
     })
