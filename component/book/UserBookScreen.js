@@ -126,9 +126,10 @@ const UserBookScreen = () => {
                                 {
                                     text: '저장',
                                     onPress: () => {
-                                        axios.post(url + '/c1/userBook', {
-                                            'bookIsbn': bookIsbn,
+                                        axios.get(url + '/c1/userBook', {
+                                            params:{'bookIsbn': bookIsbn,
                                             'userId': userId
+                                            }
                                         })
                                     },
                                     style: 'default',

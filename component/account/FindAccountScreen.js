@@ -155,8 +155,8 @@ const FindAccountScreen = () => {
             </>}
           {showPasswordModifyFlag &&
             <>
-              <TextInput style={styles.input} placeholder="비밀번호 입력" value={password} onChangeText={setPassword} secureTextEntry autoCapitalize="none" />
-              <TextInput style={styles.input} placeholder="비밀번호 확인 입력" value={confirmPassword} onChangeText={setConfirmPassword} secureTextEntry autoCapitalize="none" />
+              <TextInput style={styles.input} placeholder="비밀번호 입력" value={password} onChangeText={setPassword}  autoCapitalize="none" />
+              <TextInput style={styles.input} placeholder="비밀번호 확인 입력" value={confirmPassword} onChangeText={setConfirmPassword}  autoCapitalize="none" />
             </>
           }
         </>
