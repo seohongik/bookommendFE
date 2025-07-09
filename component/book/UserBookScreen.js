@@ -22,17 +22,6 @@ import axios, { all } from 'axios';
 const url = Platform.OS === 'android' ?
     'http://10.0.2.2:8080' : 'http://localhost:8080';
 
-/*
-total (전체)
-
-title (제목)
-
-author (저자)
-
-publisher (발행자)
-
-cheonggu (청구기호)
-*/
 
 const data = [
     { 'label': '제목', 'value': 'title' },

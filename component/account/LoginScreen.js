@@ -124,7 +124,8 @@ const LoginScreen = ({ navigation }) => {
     },
     signUpText: {
       color: '#888',
-      fontSize: 14
+      fontSize: 14,
+      margin: 30,
     }
   });
 

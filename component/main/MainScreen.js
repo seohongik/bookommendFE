@@ -25,7 +25,7 @@ import UserBookRecordScreen from '../book/UserBookRecordScreen';
 import CalendarMain from './CalMain';
 import UserBookScreen from '../book/UserBookScreen';
 import UserStatisticsScreen from "../book/UserStatisticsScreen";
-
+import UserRecommendScreeen from "../recommend/UserRecommendScreen";
 
 
 const MainScreen=({})=> {
@@ -35,10 +35,13 @@ const MainScreen=({})=> {
   const [isModalVisibleSearch, setIsModalVisibleSearch] = useState(false);
   const [isModalVisibleRecord, setIsModalVisibleRecord] = useState(false);
   const [isModalVisibleStatistics, setIsModalVisibleStatistics] = useState(false);
+  const [isModalVisibleRecommned, setIsModalVisibleRecommned] = useState(false);
+  
 
   const [searchModalKey, setSearchModalKey] = useState(0);
   const [recordModalKey, setRecordModalKey] = useState(0);
   const [statisticsModalKey, setStatisticsModalKey] = useState(0);
+  const [recommendModalKey, setRecommendModalKey] = useState(0);
   
   const onPressModalOpenSearch = ({}) => {
     setSearchModalKey(prev => prev + 1); // 키 변경
@@ -67,6 +70,15 @@ const MainScreen=({})=> {
     setIsModalVisibleStatistics(false);
   };
 
+  const onPressModalCloseRecoomend = () => {
+    setIsModalVisibleRecommned(false);
+  };
+
+    const onPressModalOpenRecommend = () => {
+    setRecommendModalKey(prev => prev + 1); // 키 변경
+    setIsModalVisibleRecommned(true);
+  };
+
   return (
     <>
       <SafeAreaView style={styles.container}>
@@ -86,6 +98,11 @@ const MainScreen=({})=> {
           <View>
             <Pressable onPress={onPressModalOpenStatistics}>
               <Text style={styles.item}>통계을 쏙!</Text>
+            </Pressable>
+          </View>
+           <View>
+            <Pressable onPress={onPressModalOpenRecommend}>
+              <Text style={styles.item}>추천을 쏙!</Text>
             </Pressable>
           </View>
         </View>
@@ -128,10 +145,25 @@ const MainScreen=({})=> {
             <Pressable onPress={onPressModalCloseStatistics } >
               <Text style={{ color: 'red' }}>Modal Close!</Text>
             </Pressable>
-            <UserStatisticsScreen key={recordModalKey}  selectedDate={selectedDate}/>
+            <UserStatisticsScreen key={statisticsModalKey}  selectedDate={selectedDate}/>
           </View>
         </Modal>
       </View>
+
+      <View>
+        <Modal
+          animationType="slide"
+          visible={isModalVisibleRecommned}
+          transparent={true}>
+          <View style={styles.modalView}>
+            <Pressable onPress={onPressModalCloseRecoomend } >
+              <Text style={{ color: 'red' }}>Modal Close!</Text>
+            </Pressable>
+            <UserRecommendScreeen key={recommendModalKey}  selectedDate={selectedDate}/>
+          </View>
+        </Modal>
+      </View>
+
     </>
   );
 }
@@ -156,12 +188,16 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: 'black',
     fontWeight: 'bold',
-    margin: 30
   },
   row: {
-    flexDirection: 'row',
+    /*flexDirection: 'row',
     justifyContent: 'flex-start', // 왼쪽 정렬
-    alignItems: 'center', // 요소들을 수직 방향으로 가운데 정렬
+    alignItems: 'center', // 요소들을 수직 방향으로 가운데 정렬*/
+    display: 'flex', 
+    flexDirection: 'row',
+    gap: 40,
+    marginLeft:20
+    
   },
   viewContainer: {
     justifyContent: 'center',

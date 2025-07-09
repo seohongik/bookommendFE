@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Text, StyleSheet, RefreshControl, ScrollView, TouchableOpacity, View, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { Text, StyleSheet, ScrollView, View } from 'react-native';
 //import { View } from '@ant-design/react-native';
 import { BarChart, LineChart, PieChart, PopulationPyramid, RadarChart } from "react-native-gifted-charts";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -48,7 +48,7 @@ const UserStatisticsScreen = ({ selectedDate }) => {
       .then((response) => {
 
         const readCount = response.data.map((item, index) => ({
-          label: item.data,
+          label: item.data+"월",
           value: item.key,
         }));
 
@@ -66,7 +66,7 @@ const UserStatisticsScreen = ({ selectedDate }) => {
       .then((response) => {
 
         const bookMoney = response.data.map((item, index) => ({
-          label: item.key,
+          label: item.key +"월",
           value: item.data,
         }));
         setDataBookMoney(bookMoney);
@@ -103,12 +103,12 @@ const UserStatisticsScreen = ({ selectedDate }) => {
         <View style={styles.container}>
           
           <View style={styles.item}>
-            <BarChart data={dataReadCount} style={styles.item} />
+            <BarChart data={dataReadCount}  style={styles.item}  />
           </View>
           <Text>월별 독서량</Text>
           
           <View style={styles.item}>
-            <BarChart data={dataBookMoney} style={styles.item} />
+            <BarChart data={dataBookMoney}  style={styles.item} textFontSize={4} showValuesAsTopLabel={true}/>
           </View>
           <Text>월별 지식의 가격 :10_000원 단위</Text>
           

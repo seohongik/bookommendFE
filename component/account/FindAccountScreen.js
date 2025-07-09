@@ -4,7 +4,6 @@ import {
   Alert
 } from 'react-native';
 import axios from 'axios';
-import { Button } from 'react-native-paper';
 
 const FindAccountScreen = () => {
   const [mode, setMode] = useState('findId'); // 'findId' or 'findPassword'
