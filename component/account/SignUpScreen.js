@@ -6,8 +6,9 @@ import {
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { RadioButton } from 'react-native-paper';
 import axios from 'axios';
+import { useNavigation } from '@react-navigation/native';
 
-const SignUpScreen = () => {
+const SignUpScreen = ({ navigation }) => {
   const [signUpId, setSignUpId] = useState('');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -28,6 +29,8 @@ const SignUpScreen = () => {
     if (selectedDate) setDateOfBirth(selectedDate);
   };
 
+
+
   const url = Platform.OS === 'android' ?
     'http://10.0.2.2:8080' : 'http://localhost:8080';
 
@@ -38,25 +41,29 @@ const SignUpScreen = () => {
       fullName, dateOfBirth, gender, phoneNumber, address, detailAddress
     });*/
 
+    
+
     axios.post(url + '/c1/user', {
       'signUpId': signUpId,
       'username': username,
       'email': email,
       'password': password,
-      'confirmPassword' :confirmPassword,
-      'fullName':fullName,
-      'dateOfBirth':dateOfBirth,
-      'gender':gender,
-      'phoneNumber':phoneNumber,
+      'confirmPassword': confirmPassword,
+      'fullName': fullName,
+      'dateOfBirth': dateOfBirth,
+      'gender': gender,
+      'phoneNumber': phoneNumber,
 
     }).then((response) => {
-      console.log("response",response)
-    }).catch((error)=>{
-      
-      console.log(error.response)
-      Alert.alert( error.response.data);
-      
-    })
+    
+      Alert.alert("성공적으로 회원 가입이 완료 되었습니다.");
+      navigation.goBack();
+
+
+    }).catch((error => {
+
+       Alert.alert(error.response.data);
+    }))
 
 
   };
@@ -65,11 +72,11 @@ const SignUpScreen = () => {
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>회원가입</Text>
 
-      <TextInput style={styles.input} placeholder="ID" value={signUpId} onChangeText={setSignUpId}  autoCapitalize="none"/>
+      <TextInput style={styles.input} placeholder="ID" value={signUpId} onChangeText={setSignUpId} autoCapitalize="none" />
       <TextInput style={styles.input} placeholder="사용자 이름" value={username} onChangeText={setUsername} autoCapitalize="none" />
-      <TextInput style={styles.input} placeholder="이메일" value={email} onChangeText={setEmail} keyboardType="email-address" />
-      <TextInput style={styles.input} placeholder="비밀번호" value={password} onChangeText={setPassword} secureTextEntry autoCapitalize="none"/>
-      <TextInput style={styles.input} placeholder="비밀번호 확인" value={confirmPassword} onChangeText={setConfirmPassword}  secureTextEntry autoCapitalize="none"/>
+      <TextInput style={styles.input} placeholder="이메일" value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" />
+      <TextInput style={styles.input} placeholder="비밀번호" value={password} onChangeText={setPassword} secureTextEntry autoCapitalize="none" />
+      <TextInput style={styles.input} placeholder="비밀번호 확인" value={confirmPassword} onChangeText={setConfirmPassword} secureTextEntry autoCapitalize="none" />
 
       <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.input}>
         <Text>생년월일: {dateOfBirth.toISOString().split('T')[0]}</Text>

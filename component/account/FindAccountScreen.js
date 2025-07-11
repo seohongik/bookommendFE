@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import axios from 'axios';
 
-const FindAccountScreen = () => {
+const FindAccountScreen = ({ navigation }) => {
   const [mode, setMode] = useState('findId'); // 'findId' or 'findPassword'
   const [authNumber, setAuthNumber] = useState(0);
   const [showPasswordModifyFlag, setShowPasswordModifyFlag] = useState(false);
@@ -73,6 +73,7 @@ const FindAccountScreen = () => {
 
       }).then((response) => {
         console.log("데이터 변경 완료")
+        navigation.goBack();
 
       }).catch((error) => {
       })

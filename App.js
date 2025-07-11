@@ -27,9 +27,8 @@ import SignUpScreen from './component/account/SignUpScreen';
 import LoginScreen from './component/account/LoginScreen';
 import FindAccountScreen from './component/account/FindAccountScreen';
 import MainScreen from './component/main/MainScreen'
-
-
 const Stack = createNativeStackNavigator();
+
 function App() {
 
 
