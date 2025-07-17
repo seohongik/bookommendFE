@@ -11,7 +11,6 @@ const LoginScreen = ({ navigation }) => {
 
   const handleLogin = () => {
     // 실제 로그인 처리 로직은 여기에 작성
-    console.log('로그인 시도:', { email, password });
 
     axios.get(url + '/r1/login?email=' + email + "&password=" + password, {
 

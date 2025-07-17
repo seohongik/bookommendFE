@@ -26,9 +26,10 @@ import CalendarMain from './CalMain';
 import UserBookScreen from '../book/UserBookScreen';
 import UserStatisticsScreen from "../book/UserStatisticsScreen";
 import UserRecommendScreeen from "../recommend/UserRecommendScreen";
+import UserQnaScreeen from "../qna/UserQnaScreeen"
 
 
-const MainScreen=({})=> {
+const MainScreen = ({ }) => {
 
   const [selectedDate, setSelectedDate] = useState(null);
 
@@ -36,14 +37,16 @@ const MainScreen=({})=> {
   const [isModalVisibleRecord, setIsModalVisibleRecord] = useState(false);
   const [isModalVisibleStatistics, setIsModalVisibleStatistics] = useState(false);
   const [isModalVisibleRecommned, setIsModalVisibleRecommned] = useState(false);
-  
+
+  const [isModalVisibleQnA, setIsModalVisibleQnA] = useState(false);
 
   const [searchModalKey, setSearchModalKey] = useState(0);
   const [recordModalKey, setRecordModalKey] = useState(0);
   const [statisticsModalKey, setStatisticsModalKey] = useState(0);
   const [recommendModalKey, setRecommendModalKey] = useState(0);
-  
-  const onPressModalOpenSearch = ({}) => {
+   const [qnaModalKey, setQnAModalKey] = useState(0);
+
+  const onPressModalOpenSearch = ({ }) => {
     setSearchModalKey(prev => prev + 1); // 키 변경
     setIsModalVisibleSearch(true);
   };
@@ -70,20 +73,29 @@ const MainScreen=({})=> {
     setIsModalVisibleStatistics(false);
   };
 
-  const onPressModalCloseRecoomend = () => {
+  const onPressModalCloseRecommend = () => {
     setIsModalVisibleRecommned(false);
   };
 
-    const onPressModalOpenRecommend = () => {
+  const onPressModalOpenRecommend = () => {
     setRecommendModalKey(prev => prev + 1); // 키 변경
     setIsModalVisibleRecommned(true);
+  };
+
+  const onPressModalOpenQnA = () => {
+    setQnAModalKey(prev => prev + 1); // 키 변경
+    setIsModalVisibleQnA(true);
+  };
+
+  const onPressModalCloseQnA= () => {
+    setIsModalVisibleQnA(false);
   };
 
   return (
     <>
       <SafeAreaView style={styles.container}>
-        <CalendarMain onDateSelect={setSelectedDate}/>
-        <TimelineScreen selectedDate={selectedDate}/>
+        <CalendarMain onDateSelect={setSelectedDate} />
+        <TimelineScreen selectedDate={selectedDate} />
         <View style={styles.row}>
           <View>
             <Pressable onPress={onPressModalOpenSearch} >
@@ -100,9 +112,14 @@ const MainScreen=({})=> {
               <Text style={styles.item}>통계을 쏙!</Text>
             </Pressable>
           </View>
-           <View>
+          <View>
             <Pressable onPress={onPressModalOpenRecommend}>
               <Text style={styles.item}>추천을 쏙!</Text>
+            </Pressable>
+          </View>
+          <View>
+            <Pressable onPress={onPressModalOpenQnA}>
+              <Text style={styles.item}>검색을 쏙!</Text>
             </Pressable>
           </View>
         </View>
@@ -117,7 +134,7 @@ const MainScreen=({})=> {
             <Pressable onPress={onPressModalCloseSearch} >
               <Text style={{ color: 'red' }}>Modal Close!</Text>
             </Pressable>
-            <UserBookScreen key={searchModalKey} selectedDate={selectedDate}/>
+            <UserBookScreen key={searchModalKey} selectedDate={selectedDate} />
           </View>
         </Modal>
       </View>
@@ -135,17 +152,17 @@ const MainScreen=({})=> {
           </View>
         </Modal>
       </View>
-      
+
       <View>
         <Modal
           animationType="slide"
           visible={isModalVisibleStatistics}
           transparent={true}>
           <View style={styles.modalView}>
-            <Pressable onPress={onPressModalCloseStatistics } >
+            <Pressable onPress={onPressModalCloseStatistics} >
               <Text style={{ color: 'red' }}>Modal Close!</Text>
             </Pressable>
-            <UserStatisticsScreen key={statisticsModalKey}  selectedDate={selectedDate}/>
+            <UserStatisticsScreen key={statisticsModalKey} selectedDate={selectedDate} />
           </View>
         </Modal>
       </View>
@@ -156,14 +173,27 @@ const MainScreen=({})=> {
           visible={isModalVisibleRecommned}
           transparent={true}>
           <View style={styles.modalView}>
-            <Pressable onPress={onPressModalCloseRecoomend } >
+            <Pressable onPress={onPressModalCloseRecommend} >
               <Text style={{ color: 'red' }}>Modal Close!</Text>
             </Pressable>
-            <UserRecommendScreeen key={recommendModalKey}  selectedDate={selectedDate}/>
+            <UserRecommendScreeen key={recommendModalKey} selectedDate={selectedDate} />
           </View>
         </Modal>
       </View>
 
+      <View>
+        <Modal
+          animationType="fade"
+          visible={isModalVisibleQnA}
+          transparent={true}>
+          <View style={styles.modalView}>
+            <Pressable onPress={onPressModalCloseQnA} >
+              <Text style={{ color: 'red' }}>Modal Close!</Text>
+            </Pressable>
+            <UserQnaScreeen key={qnaModalKey} selectedDate={selectedDate} />
+          </View>
+        </Modal>
+      </View>
     </>
   );
 }
@@ -173,8 +203,8 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     height: '100%',
-    backgroundColor:'#fff'
-    
+    backgroundColor: '#fff'
+
   },
   viewContainer: {
     justifyContent: 'center',
@@ -193,11 +223,11 @@ const styles = StyleSheet.create({
     /*flexDirection: 'row',
     justifyContent: 'flex-start', // 왼쪽 정렬
     alignItems: 'center', // 요소들을 수직 방향으로 가운데 정렬*/
-    display: 'flex', 
+    display: 'flex',
     flexDirection: 'row',
-    gap: 40,
-    marginLeft:20
-    
+    gap: 15,
+    marginLeft: 20
+
   },
   viewContainer: {
     justifyContent: 'center',

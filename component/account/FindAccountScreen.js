@@ -74,7 +74,6 @@ const FindAccountScreen = ({ navigation }) => {
       }).then((response) => {
         console.log("데이터 변경 완료")
         navigation.goBack();
-
       }).catch((error) => {
       })
     }else{
